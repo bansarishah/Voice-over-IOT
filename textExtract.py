@@ -1,16 +1,10 @@
 import sys
 from wit import Wit
 import requests
+import speech_recognition as sr
+
 
 def textExtraction(text):
-	if len(sys.argv) != 2:
-	    print('usage: python ' + sys.argv[0] + ' <wit-token>')
-	    exit(1)
-	access_token = sys.argv[1]
-
-	# Quickstart example
-	# See https://wit.ai/ar7hur/Quickstart
-
 	def send(request, response):
 	    print(response['text'])
 
@@ -25,7 +19,7 @@ def textExtraction(text):
 	    'turnOn': turn_on,
 	}
 
-	client = Wit(access_token=access_token, actions=actions)
+	client = Wit(access_token="25HHBAQ44RFUK4JNZHLK2WMGKGLNCXKE", actions=actions)
 	resp = client.message(text)
 
 	on_off = resp['entities']['on_off'][0]['value']
@@ -38,8 +32,33 @@ def textExtraction(text):
 	requests.get("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)	
 
 
-text = input("Please enter your command: ")
-textExtraction(text)
+# text = input("Please enter your command: ")
+# textExtraction(text)
+
+while(True):
+	r = sr.Recognizer()
+	with sr.Microphone() as source:
+	    print("Say something!")
+	    # speech.say("say something")
+	    audio = r.listen(source)
+	    print("heard something.., lemme check ")
+	    # speech.say("heard something")
+	# Speech recognition using Google Speech Recognition
+	try:
+	    text = r.recognize_google(audio)
+	    print("You said: " + text)
+	    # speech.say("you said: " + text)
+	    textExtraction(text)
+	    if(text.lower() == "bye"):
+	    	break;
+	except sr.UnknownValueError:
+		print("Google Speech Recognition could not understand audio")
+	#	speech.say("Racoon could not understand, try again")
+	except sr.RequestError as e:
+		print("Could not request results from Google Speech Recognition service; {0}".format(e))
+	except Exception as e:
+		print(str(e))
+	#	speech.say(str(e))
 
 
 
