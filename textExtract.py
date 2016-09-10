@@ -2,7 +2,9 @@ import sys
 from wit import Wit
 import requests
 import speech_recognition as sr
-
+import pyttsx
+import threading
+import os
 
 def textExtraction(text):
 	def send(request, response):
@@ -31,34 +33,30 @@ def textExtraction(text):
 	print("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)	
 	requests.get("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)	
 
-
-# text = input("Please enter your command: ")
-# textExtraction(text)
-
 while(True):
 	r = sr.Recognizer()
 	with sr.Microphone() as source:
 	    print("Say something!")
-	    # speech.say("say something")
+	    os.system("say say something")
 	    audio = r.listen(source)
 	    print("heard something.., lemme check ")
-	    # speech.say("heard something")
+	    os.system("say heard something")
 	# Speech recognition using Google Speech Recognition
 	try:
 	    text = r.recognize_google(audio)
 	    print("You said: " + text)
-	    # speech.say("you said: " + text)
+	    os.system(" say you said: " + text)
 	    textExtraction(text)
-	    if(text.lower() == "bye"):
+	    if(text.lower() == "stop"):
 	    	break;
 	except sr.UnknownValueError:
 		print("Google Speech Recognition could not understand audio")
-	#	speech.say("Racoon could not understand, try again")
+		#saysomething("Racoon could not understand, try again")
 	except sr.RequestError as e:
 		print("Could not request results from Google Speech Recognition service; {0}".format(e))
 	except Exception as e:
 		print(str(e))
-	#	speech.say(str(e))
+		#saysomething(str(e))
 
 
 
