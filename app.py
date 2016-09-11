@@ -7,6 +7,7 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(36, GPIO.OUT)
 GPIO.setup(40, GPIO.OUT)
 GPIO.setup(37, GPIO.OUT)
+GPIO.setup(33, GPIO.OUT)
 
 app = Flask(__name__)
 map = dict()
@@ -47,7 +48,22 @@ def do_the_job():
     action = request.args.get("action")
     intent = request.args.get("intent")
     location = request.args.get("location")
-    status = get_status(map[location+intent])
+    question = request.args.get("question")
+    return question_status(location, intent, action)
+
+@app.route('/racoon3', methods = ['GET'])
+def do_the_job3():
+    temp = request.args.get("temperature")
+    intent = request.args.get("intent")
+    location = "bedroom"
+    # set temp
+    return "the A.C. temperature is set to " + temp 
+
+def question_status(location, intent, action):
+    temp = dict()
+    temp[1] = "on"
+    temp[0] = "off"
+    status = temp[get_status(map[location+intent])]
     if(status == action ):
         return "Yes, the " + location + " " + intent + " is " + action
     else:
@@ -61,8 +77,15 @@ def process_text():
         text = request.args.get("text")
         mode = request.args.get("mode")
         prs = textExtraction(text)
-        do_gpio_job(prs['action'],map[prs['location'] + prs['intent']])
-        msg = "Switching " + prs['action'] + " " + prs['location'] + "  " + prs['intent']
+        print(prs)
+        if("temperature" in prs):
+            msg = "The A.C temperature is set to " + prs['temperature']
+        elif('question' in prs):
+            msg = question_status(prs['location'], prs['intent'], prs['action'])
+        else:
+            do_gpio_job(prs['action'],map[prs['location'] + prs['intent']])
+            msg = "Switched " + prs['action'] + " " + prs['location'] + "  " + prs['intent']
+        
         if(mode == "app"):
             print("mode app returning " + msg )
             return msg

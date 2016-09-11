@@ -19,6 +19,14 @@ while(True):
             print("You said: " + text)
             os.system(" say you said: " + text)
 	    prs = textExtraction(text)
+	    if("temperature" in prs"):
+		msg = ""
+	    else if('question' in prs):
+            	r = (prs['location'], prs['intent'], prs['action'])
+            else:
+            	do_gpio_job(prs['action'],map[prs['location'] + prs['intent']])
+            	msg = "Switching " + prs['action'] + " " + prs['location'] + "  " + prs['intent']
+
 	    print("http://172.16.26.33:5000/racoon?intent="+prs['intent']+"&location="+prs['location']+"&action="+prs['action'])
             r = requests.get("http://172.16.26.33:5000/racoon?intent="+prs['intent']+"&location="+prs['location']+"&action="+prs['action'])
             os.syste,("say " + r.text)

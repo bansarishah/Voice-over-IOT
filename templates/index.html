@@ -25,13 +25,25 @@
         fill: #dd3333;
         fill-opacity: 0.8
       }
+      a {
+	color: black;
+	}
+	a:hover {
+		color:black;
+		style:none;
+		text-decoration:none;
+	}
+	a:clicked {
+		color:black;
+		style:none;
+	} 
     </style>
 
 </head>
 
 <body >
 	<div class = "container">
-	<h2> Dashboard </h2>
+	<a href = "/"><h2> Dashboard </h2></a>
 	</div>
 	<div class = "container">
 	<h3> Status of all lights </h3>
@@ -57,9 +69,9 @@
 	  .speech textarea {border: 0; width: 240px; height:30px; display: inline-block;}
 	  .speech img {float: right; width: 40px }
 	</style>
-	 <div class = "col-md-6 col-sm-6">
+	 <div class = "col-md-6 col-sm-6" >
 	<!-- Search Form -->
-	<form id="labnol" method="get" action="process">
+	<form id="labnol" method="get" action="process" style="margin:0 auto;">
 	  <div class="speech">
 	    <textarea name="text" id="transcript" > </textarea>
 	    <img onclick="startDictation()" src="//i.imgur.com/cHidSVu.gif" />

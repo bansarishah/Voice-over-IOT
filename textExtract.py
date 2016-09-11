@@ -22,16 +22,40 @@ def textExtraction(text):
 
 	client = Wit(access_token="25HHBAQ44RFUK4JNZHLK2WMGKGLNCXKE", actions=actions)
 	resp = client.message(text)
-
-	on_off = resp['entities']['on_off'][0]['value']
-	location = resp['entities']['location'][0]['value']
-	intent = resp['entities']['intent'][0]['value']
-
-	print(on_off,location,intent)
+	print(resp)
 	temp_map = dict()
-	temp_map['action'] = on_off
-	temp_map['location'] = location
-	temp_map['intent'] = intent
+	temp_map.clear()
+	entities = resp['entities']
+	intent = entities['intent'][0]['value']
+	if (entities.get('temperature')):
+		temperature = str(entities['temperature'][0]['value'])
+		print(intent, temperature)
+		temp_map['intent'] = intent
+		temp_map['location'] = "bedroom"
+		temp_map['temperature'] = temperature
+		#print("http://172.16.26.33:5000/racoon3?intent="+intent+"&temperature="+str(temperature))
+		#requests.get("http://172.16.26.33:5000/racoon3?intent="+intent+"&temperature="+str(temperature))
+	else :
+		location = entities['location'][0]['value']
+		on_off = resp['entities']['on_off'][0]['value']
+		if (entities.get('question')) :
+			question = resp['entities']['question'][0]['value']
+			print(intent, location ,on_off, question)
+			temp_map['intent'] = intent
+			temp_map['location'] = location
+			temp_map['action'] = on_off
+			temp_map['question'] = question
+			print("http://172.16.26.33:5000/racoon2?intent="+intent+"&location="+location+"&action="+on_off+"&question="+question)
+			#r=requests.get("http://172.16.26.33:5000/racoon2?intent="+intent+"&location="+location+"&action="+on_off+"&question="+question)
+			#print(r.text)
+		else :
+			print(intent, location ,on_off)
+			temp_map['location'] = location
+			temp_map['intent'] = intent
+			temp_map['action'] = on_off
+			print("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)
+			#r = requests.get("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)
+			#print(r.text)
 	return (temp_map)
 
 # while(True):
