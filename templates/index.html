@@ -7,23 +7,57 @@
   <title>The Rocket Racoon</title>
   <meta name="description" content="raspberry app">
   <meta name="author" content="teja">
+  <script src='https://code.responsivevoice.org/responsivevoice.js'></script>
+   <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='bower_components/c3/c3.min.css')}}">
+    <script src="{{url_for('static', filename='bower_components/pubnub/web/pubnub.min.js')}}"></script>
+    <script src="{{url_for('static', filename='bower_components/d3/d3.min.js')}}"></script>
+    <script src="{{url_for('static', filename='bower_components/c3/c3.min.js')}}"></script>
+
+    <script src="{{url_for('static', filename='pubnub-c3.js')}}"></script>
+
+    <style>
+      .c3-region-1 {
+        fill: #dd3333;
+        fill-opacity: 0.8
+      }
+    </style>
+
 </head>
 
-<body>
+<body >
+	<div class = "container">
 	<h2> Dashboard </h2>
+	</div>
+	<div class = "container">
 	<h3> Status of all lights </h3>
 	<br>
+	<div class = "row">
+	<div class = "col-md-6 col-sm-6">
 	<p>Bedroom,  {{ bedroomlight}}</p>
 	<p>Kitchen, {{ kitchenlight }}</p>
 	<p>bathroom, {{ bathlight }} </p>
 	<p> message : {{message}} </p>
+	</div> <!-- col -->
+	<script>
+	      function load() {
+		responsiveVoice.speak("{{message}}");
+	        console.log("load event detected!");
+	      }
+	      // window.onload = load;
+	    </script>
+	<input onclick='responsiveVoice.speak("{{message}}");' type='button' value='🔊 Play' hidden/>
 	<!-- CSS Styles -->
 	<style>
 	  .speech {border: 1px solid #DDD; width: 300px; padding: 0; margin: 0}
 	  .speech textarea {border: 0; width: 240px; height:30px; display: inline-block;}
 	  .speech img {float: right; width: 40px }
 	</style>
-	 
+	 <div class = "col-md-6 col-sm-6">
 	<!-- Search Form -->
 	<form id="labnol" method="get" action="process">
 	  <div class="speech">
@@ -31,7 +65,8 @@
 	    <img onclick="startDictation()" src="//i.imgur.com/cHidSVu.gif" />
 	  </div>
 	</form>
-	 
+	 </div> <!-- cols -->
+	</div> <!-- row -->
 	<!-- HTML5 Speech Recognition API -->
 	<script>
 	  function startDictation() {
@@ -50,6 +85,7 @@
 	        document.getElementById('transcript').value
 	                                 = e.results[0][0].transcript;
 	        recognition.stop();
+		responsiveVoice.speak("just a sec, buddy");
 	        document.getElementById('labnol').submit();
 	      };
 	 
@@ -60,6 +96,82 @@
 	    }
 	  }
 	</script>
-
+	</div> <!-- container -->
+	<div class = "container">
+	<div class = "row">
+	<div class = "col-md-6 col-sm-6">
+	<div id="chart"></div>
+	<h1 align="center">Humidity Readings</h1>
+	    <script>
+	      var __eon_pubnub = PUBNUB.init({
+	        subscribe_key: "sub-c-e1883ff8-77ee-11e6-8a0d-0619f8945a4f"
+	      });
+	    eon.chart({
+	    pubnub: __eon_pubnub,
+	  channel: 'humeon',
+	  generate: {
+	    bindto: '#chart',
+	    data: {
+	      type: 'gauge',
+	    },
+	    gauge: {
+	      min: 0,
+	      max: 100
+	    },
+	    
+	    color: {
+	      pattern: ['#FF0000', '#F6C600', '#60B044'],
+	      threshold: {
+	        values: [30, 60, 90]
+	      }
+	    }
+	  }
+	});
+	    </script>
+	</div>
+	<div class = "col-md-6 col-sm-6">
+	<div id="chart1"></div>
+	    <h1 align="center">Temperature Readings</h1>
+	    <script>
+	    var __eon_pubnub = PUBNUB.init({
+	        subscribe_key: "sub-c-e1883ff8-77ee-11e6-8a0d-0619f8945a4f"
+	      });
+	    eon.chart({
+	    pubnub: __eon_pubnub,
+	  history: true,
+	  channel: 'tempeon',
+	  rate: 5000,
+	  limit: 20,
+	  flow: true,
+	  generate: {
+	    bindto: '#chart1',
+	    data: {
+	      x: 'x',
+	      labels: false,
+	      type: "area-spline"
+	    },
+	    transition: {
+	      duration: 250
+	    },
+	    tooltip: {
+	     show: true
+	    },
+	    point: {
+	      show: true
+	    },
+	    axis : {
+	      x : {
+	        type : 'timeseries',
+	        tick: {
+	          format: '%H:%M:%S'
+	        }
+	      }
+	    }
+	  }
+	});
+	    </script>
+	</div> <!-- col -->
+	</div> <!-- row -->
+	</div> <!-- container -->
 </body>
 </html>

@@ -19,8 +19,8 @@ while(True):
             print("You said: " + text)
             os.system(" say you said: " + text)
 	    prs = textExtraction(text)
-	    print("http://172.16.26.33:5000/racoon?intent="+prs[2]+"&location="+prs[1]+"&action="+prs[0])
-            r = requests.get("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)
+	    print("http://172.16.26.33:5000/racoon?intent="+prs['intent']+"&location="+prs['location']+"&action="+prs['action'])
+            r = requests.get("http://172.16.26.33:5000/racoon?intent="+prs['intent']+"&location="+prs['location']+"&action="+prs['action'])
             os.syste,("say " + r.text)
             if(text == "stop"):
                 break;

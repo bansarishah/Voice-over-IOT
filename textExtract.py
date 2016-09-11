@@ -28,8 +28,11 @@ def textExtraction(text):
 	intent = resp['entities']['intent'][0]['value']
 
 	print(on_off,location,intent)
-	
-	return ((on_off, location, intent))
+	temp_map = dict()
+	temp_map['action'] = on_off
+	temp_map['location'] = location
+	temp_map['intent'] = intent
+	return (temp_map)
 
 # while(True):
 #	r = sr.Recognizer()

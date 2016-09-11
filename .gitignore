@@ -1,3 +1,5 @@
+static/*
+*.DS_Store
 *.swp
 templates/*.swp
 

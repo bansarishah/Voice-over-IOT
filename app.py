@@ -11,13 +11,13 @@ GPIO.setup(37, GPIO.OUT)
 app = Flask(__name__)
 map = dict()
 
-map['bedroom'] = 36
-map['kitchen'] = 40
-map['bathroom'] = 37
-
+map['bedroomlight'] = 36
+map['kitchenlight'] = 40
+map['bathroomlight'] = 37
+map['bedroomac'] = 33
 @app.route('/')
 def index():
-    return render_template('index.html', bathlight = get_status(map['bathroom']), bedroomlight = get_status(map['bedroom']), kitchenlight = get_status(map['kitchen']), message = "")
+    return render_template('index.html', bathlight = get_status(map['bathroomlight']), bedroomlight = get_status(map['bedroomlight']), kitchenlight = get_status(map['kitchenlight']), message = "")
 
 def get_status(pin):
     return GPIO.input(pin);
@@ -35,23 +35,46 @@ def get_status(pin):
 #         return ("adding " + port + "for " + loc) 
 
 @app.route('/racoon', methods = ['GET'])
+def do_the_job2():
+    action = request.args.get("action")
+    intent = request.args.get("intent")
+    location = request.args.get("location")
+    do_gpio_job(action, map[location+intent])
+    return " Switching " + action + " " + location + " " + intent 
+
+@app.route('/racoon2', methods = ['GET'])
 def do_the_job():
     action = request.args.get("action")
     intent = request.args.get("intent")
     location = request.args.get("location")
-    do_gpio_job(action, map[location])
-    return " Switching " + action + " " + location + " " + intent
+    status = get_status(map[location+intent])
+    if(status == action ):
+        return "Yes, the " + location + " " + intent + " is " + action
+    else:
+        return "No, the " + location + " " + intent + " is " + status
     
 @app.route('/process', methods = ['GET'])
 def process_text():
+    msg = "Please try again."
+    mode = "web"
     try:
         text = request.args.get("text")
+        mode = request.args.get("mode")
         prs = textExtraction(text)
-        do_gpio_job(prs[0],map[prs[1]])
-        return render_template('index.html', bathlight = get_status(map['bathroom']), bedroomlight = get_status(map['bedroom']), kitchenlight = get_status(map['kitchen']), message = "Switching " + prs[0] + " " + prs[1] + "  " + prs[2] )
+        do_gpio_job(prs['action'],map[prs['location'] + prs['intent']])
+        msg = "Switching " + prs['action'] + " " + prs['location'] + "  " + prs['intent']
+        if(mode == "app"):
+            print("mode app returning " + msg )
+            return msg
+        print("mode not app returning" + msg)
+        return render_template('index.html', bathlight = get_status(map['bathroomlight']), bedroomlight = get_status(map['bedroomlight']), kitchenlight = get_status(map['kitchenlight']), message = msg )
     except Exception as e:
-	print(str(e))
-    return render_template('index.html', bathlight = get_status(map['bathroom']), bedroomlight = get_status(map['bedroom']), kitchenlight = get_status(map['kitchen']), message = "Try again " )
+	print("error " +str(e))
+    if(mode == "app"):
+        print("returning default msg mode app")
+        return msg
+    print("retrunng defalutl msg, mode not app")
+    return render_template('index.html', bathlight = get_status(map['bathroomlight']), bedroomlight = get_status(map['bedroomlight']), kitchenlight = get_status(map['kitchenlight']), message = msg )
 
 def do_gpio_job(action, pin):
     if(action == "on"):
