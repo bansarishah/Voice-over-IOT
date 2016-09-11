@@ -1,6 +1,7 @@
 import speech_recognition as sr
 import os
 import time
+import requests
 
 while(True):
         r = sr.Recognizer()
@@ -16,8 +17,11 @@ while(True):
             text = r.recognize_google(audio)
             print("You said: " + text)
             os.system(" say you said: " + text)
-            os.system("say " + textExtraction(text, uri = "http://172.16.26.33:5000/racoon"))
-            if(text.lower() == "stop"):
+	    prs = textExtraction(text)
+	    print("http://172.16.26.33:5000/racoon?intent="+prs[2]+"&location="+prs[1]+"&action="+prs[0])
+            r = requests.get("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)
+            os.syste,("say " + r.text)
+            if(text == "stop"):
                 break;
         except sr.UnknownValueError:
                 print("Google Speech Recognition could not understand audio")

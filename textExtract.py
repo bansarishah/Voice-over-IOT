@@ -5,7 +5,7 @@ import requests
 #import os
 #import time
 
-def textExtraction(text, uri):
+def textExtraction(text):
 	def send(request, response):
 	    print(response['text'])
 
@@ -28,10 +28,8 @@ def textExtraction(text, uri):
 	intent = resp['entities']['intent'][0]['value']
 
 	print(on_off,location,intent)
-
-	print(uri + "?intent="+intent+"&location="+location+"&action="+on_off)	
-	r = requests.get(uri + "?intent="+intent+"&location="+location+"&action="+on_off)
-	return r.text
+	
+	return ((on_off, location, intent))
 
 # while(True):
 #	r = sr.Recognizer()
