@@ -1,16 +1,11 @@
 import sys
 from wit import Wit
 import requests
+#import speech_recognition as sr
+#import os
+#import time
 
-def textExtraction(text):
-	if len(sys.argv) != 2:
-	    print('usage: python ' + sys.argv[0] + ' <wit-token>')
-	    exit(1)
-	access_token = sys.argv[1]
-
-	# Quickstart example
-	# See https://wit.ai/ar7hur/Quickstart
-
+def textExtraction(text, uri):
 	def send(request, response):
 	    print(response['text'])
 
@@ -25,7 +20,7 @@ def textExtraction(text):
 	    'turnOn': turn_on,
 	}
 
-	client = Wit(access_token=access_token, actions=actions)
+	client = Wit(access_token="25HHBAQ44RFUK4JNZHLK2WMGKGLNCXKE", actions=actions)
 	resp = client.message(text)
 
 	on_off = resp['entities']['on_off'][0]['value']
@@ -34,13 +29,36 @@ def textExtraction(text):
 
 	print(on_off,location,intent)
 
-	print("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)	
-	r = requests.get("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)	
+	print(uri + "?intent="+intent+"&location="+location+"&action="+on_off)	
+	r = requests.get(uri + "?intent="+intent+"&location="+location+"&action="+on_off)
+	return r.text
 
-
-text = raw_input("Please enter your command: ")
-textExtraction(text)
-
+# while(True):
+#	r = sr.Recognizer()
+#	with sr.Microphone() as source:
+#	    time.sleep(1)
+#	    print("Say something!")
+#	    os.system("say say something")
+#	    audio = r.listen(source)
+#	    print("trying to understand what you just said")
+#	    os.system("say just a sec buddy")
+#	# Speech recognition using Google Speech Recognition
+#	try:
+#	    text = r.recognize_google(audio)
+#	    print("You said: " + text)
+#	    os.system(" say you said: " + text)
+#	    os.system("say " + textExtraction(text))
+#	    if(text.lower() == "stop"):
+#	    	break;
+#	except sr.UnknownValueError:
+#		print("Google Speech Recognition could not understand audio")
+#		os.system("say i can not understand what you said, try again")
+#		#saysomething("Racoon could not understand, try again")
+#	except sr.RequestError as e:
+#		print("Could not request results from Google Speech Recognition service; {0}".format(e))
+#	except Exception as e:
+#		print(str(e))
+#		#saysomething(str(e))
 
 
 # client = Wit(access_token=access_token, actions=actions)

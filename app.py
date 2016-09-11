@@ -45,7 +45,7 @@ def do_the_job():
 @app.route('/process', methods = ['GET'])
 def process_text():
     text = request.args.get("text")
-    textExtraction(text)
+    textExtraction(text, uri = "http://localhost:5000/racoon")
     return render_template('index.html', bathlight = get_status(map['bathroom']), bedroomlight = get_status(map['bedroom']), kitchenlight = get_status(map['kitchen']), message = text)
 
 def do_gpio_job(action, pin):
