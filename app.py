@@ -44,10 +44,14 @@ def do_the_job():
     
 @app.route('/process', methods = ['GET'])
 def process_text():
-    text = request.args.get("text")
-    prs = textExtraction(text)
-    do_gpio_job(prs[0],map[prs[1]])
-    return render_template('index.html', bathlight = get_status(map['bathroom']), bedroomlight = get_status(map['bedroom']), kitchenlight = get_status(map['kitchen']), message = text)
+    try:
+        text = request.args.get("text")
+        prs = textExtraction(text)
+        do_gpio_job(prs[0],map[prs[1]])
+        return render_template('index.html', bathlight = get_status(map['bathroom']), bedroomlight = get_status(map['bedroom']), kitchenlight = get_status(map['kitchen']), message = "Switching " + prs[0] + " " + prs[1] + "  " + prs[2] )
+    except Exception as e:
+	print(str(e))
+    return render_template('index.html', bathlight = get_status(map['bathroom']), bedroomlight = get_status(map['bedroom']), kitchenlight = get_status(map['kitchen']), message = "Try again " )
 
 def do_gpio_job(action, pin):
     if(action == "on"):
