@@ -16,5 +16,49 @@
 	<p>Bedroom,  {{ bedroomlight}}</p>
 	<p>Kitchen, {{ kitchenlight }}</p>
 	<p>bathroom, {{ bathlight }} </p>
+	<!-- CSS Styles -->
+	<style>
+	  .speech {border: 1px solid #DDD; width: 300px; padding: 0; margin: 0}
+	  .speech textarea {border: 0; width: 240px; display: inline-block;}
+	  .speech img {float: right; width: 40px }
+	</style>
+	 
+	<!-- Search Form -->
+	<form id="labnol" method="get">
+	  <div class="speech">
+	    <textarea name="q" id="transcript" placeholder="Speak" rows="5" > </textarea>
+	    <img onclick="startDictation()" src="//i.imgur.com/cHidSVu.gif" />
+	  </div>
+	</form>
+	 
+	<!-- HTML5 Speech Recognition API -->
+	<script>
+	  function startDictation() {
+	 
+	    if (window.hasOwnProperty('webkitSpeechRecognition')) {
+	 
+	      var recognition = new webkitSpeechRecognition();
+ 
+	      recognition.continuous = false;
+	      recognition.interimResults = false;
+	 
+	      recognition.lang = "en-US";
+	      recognition.start();
+	 
+	      recognition.onresult = function(e) {
+	        document.getElementById('transcript').value
+	                                 = e.results[0][0].transcript;
+	        recognition.stop();
+	        // document.getElementById('labnol').submit();
+	      };
+	 
+   	   recognition.onerror = function(e) {
+	        recognition.stop();
+	      }
+	 
+	    }
+	  }
+	</script>
+
 </body>
 </html>

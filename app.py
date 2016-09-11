@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import RPi.GPIO as GPIO
 import time
-
+from textExtract import textExtraction
 GPIO.setmode(GPIO.BOARD)
 
 GPIO.setup(36, GPIO.OUT)
@@ -17,7 +17,7 @@ map['bathroom'] = 37
 
 @app.route('/')
 def index():
-    return render_template('index.html', bathlight = get_status(map['bathroom']), bedroomlight = get_status(map['bedroom']), kitchenlight = get_status(map['kitchen']))
+    return render_template('index.html', bathlight = get_status(map['bathroom']), bedroomlight = get_status(map['bedroom']), kitchenlight = get_status(map['kitchen']), message = "")
 
 def get_status(pin):
     return GPIO.input(pin);
@@ -40,8 +40,14 @@ def do_the_job():
     intent = request.args.get("intent")
     location = request.args.get("location")
     do_gpio_job(action, map[location])
-    return " you want me to " + action + " " + location + " " + intent
+    return " Switching " + action + " " + location + " " + intent
     
+@app.route('/process', methods = ['GET'])
+def process_text():
+    text = request.args.get("text")
+    textExtraction(text)
+    return render_template('index.html', bathlight = get_status(map['bathroom']), bedroomlight = get_status(map['bedroom']), kitchenlight = get_status(map['kitchen']), message = text)
+
 def do_gpio_job(action, pin):
     if(action == "on"):
         GPIO.output(pin, True)

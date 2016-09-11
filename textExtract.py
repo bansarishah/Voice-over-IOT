@@ -35,10 +35,10 @@ def textExtraction(text):
 	print(on_off,location,intent)
 
 	print("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)	
-	requests.get("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)	
+	r = requests.get("http://172.16.26.33:5000/racoon?intent="+intent+"&location="+location+"&action="+on_off)	
 
 
-text = input("Please enter your command: ")
+text = raw_input("Please enter your command: ")
 textExtraction(text)
 
 
