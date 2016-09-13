@@ -20,7 +20,7 @@ def textExtraction(text):
 	    'turnOn': turn_on,
 	}
 
-	client = Wit(access_token="25HHBAQ44RFUK4JNZHLK2WMGKGLNCXKE", actions=actions)
+	client = Wit(access_token = 'access_token', actions=actions)
 	resp = client.message(text)
 	print(resp)
 	temp_map = dict()
